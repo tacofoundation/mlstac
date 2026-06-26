@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+         <loc>https://tacofoundation.github.io/mlstac/</loc>
+         <lastmod>2026-06-26</lastmod>
+    </url>
+    <url>
+         <loc>https://tacofoundation.github.io/mlstac/about/changelog/</loc>
+         <lastmod>2026-06-26</lastmod>
+    </url>
+    <url>
+         <loc>https://tacofoundation.github.io/mlstac/api/functions/</loc>
+         <lastmod>2026-06-26</lastmod>
+    </url>
+    <url>
+         <loc>https://tacofoundation.github.io/mlstac/api/modelloader/</loc>
+         <lastmod>2026-06-26</lastmod>
+    </url>
+    <url>
+         <loc>https://tacofoundation.github.io/mlstac/getting-started/installation/</loc>
+         <lastmod>2026-06-26</lastmod>
+    </url>
+    <url>
+         <loc>https://tacofoundation.github.io/mlstac/getting-started/quickstart/</loc>
+         <lastmod>2026-06-26</lastmod>
+    </url>
+    <url>
+         <loc>https://tacofoundation.github.io/mlstac/guide/downloading/</loc>
+         <lastmod>2026-06-26</lastmod>
+    </url>
+    <url>
+         <loc>https://tacofoundation.github.io/mlstac/guide/loading-models/</loc>
+         <lastmod>2026-06-26</lastmod>
+    </url>
+</urlset>

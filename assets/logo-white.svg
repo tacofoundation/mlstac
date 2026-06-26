@@ -1,0 +1,12 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+  <g><polygon points="54.00,140.00 120.00,173.00 120.00,193.00 54.00,160.00" fill="#FFFFFF" opacity="0.82"/>
+    <polygon points="120.00,173.00 186.00,140.00 186.00,160.00 120.00,193.00" fill="#FFFFFF" opacity="0.62"/>
+    <polygon points="120.00,107.00 186.00,140.00 120.00,173.00 54.00,140.00" fill="#FFFFFF" opacity="1.0"/></g>
+  <g><polygon points="54.00,110.00 120.00,143.00 120.00,163.00 54.00,130.00" fill="#FFFFFF" opacity="0.82"/>
+    <polygon points="120.00,143.00 186.00,110.00 186.00,130.00 120.00,163.00" fill="#FFFFFF" opacity="0.62"/>
+    <polygon points="120.00,77.00 186.00,110.00 120.00,143.00 54.00,110.00" fill="#FFFFFF" opacity="1.0"/></g>
+  <g><polygon points="54.00,80.00 120.00,113.00 120.00,133.00 54.00,100.00" fill="#FFFFFF" opacity="0.82"/>
+    <polygon points="120.00,113.00 186.00,80.00 186.00,100.00 120.00,133.00" fill="#FFFFFF" opacity="0.62"/>
+    <polygon points="120.00,47.00 186.00,80.00 120.00,113.00 54.00,80.00" fill="#FFFFFF" opacity="1.0"/>
+    <polygon points="120.00,69.00 142.00,58.00 164.00,69.00 142.00,80.00" fill="#F4B740" opacity="1.0"/></g>
+</svg>
