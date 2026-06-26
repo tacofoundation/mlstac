@@ -7,6 +7,7 @@ and Google Cloud Storage.
 
 It handles downloading model files and loading Python modules dynamically.
 """
+
 import json
 import sys
 import types
@@ -38,6 +39,7 @@ def _fetch_http(source: str) -> str:
     response.raise_for_status()
     return response.text
 
+
 def _fetch_local(source: str) -> str:
     """
     Read content from the local filesystem.
@@ -54,6 +56,7 @@ def _fetch_local(source: str) -> str:
     """
     with open(source, encoding="utf-8") as f:
         return f.read()
+
 
 def _fetch_s3(source: str) -> str:
     """
@@ -79,6 +82,7 @@ def _fetch_s3(source: str) -> str:
     obj = s3.get_object(Bucket=parsed.netloc, Key=parsed.path.lstrip("/"))
     return obj["Body"].read().decode("utf-8")
 
+
 def _fetch_gs(source: str) -> str:
     """
     Fetch content from Google Cloud Storage.
@@ -96,12 +100,15 @@ def _fetch_gs(source: str) -> str:
     try:
         from google.cloud import storage
     except ImportError as e:
-        raise ImportError("GCS access requires google-cloud-storage: pip install google-cloud-storage") from e
+        raise ImportError(
+            "GCS access requires google-cloud-storage: pip install google-cloud-storage"
+        ) from e
 
     parsed = urlparse(source)
     client = storage.Client()
     blob = client.bucket(parsed.netloc).blob(parsed.path.lstrip("/"))
     return blob.download_as_text()
+
 
 # Map of schemes to their handler functions
 _SCHEME_HANDLERS: dict[str, Callable[[str], str]] = {
@@ -112,6 +119,7 @@ _SCHEME_HANDLERS: dict[str, Callable[[str], str]] = {
     "s3": _fetch_s3,
     "gs": _fetch_gs,
 }
+
 
 def fetch_source(source: str, snippet_suffix: str = "") -> str:
     """
@@ -135,18 +143,30 @@ def fetch_source(source: str, snippet_suffix: str = "") -> str:
 
     handler = _SCHEME_HANDLERS.get(scheme)
     if not handler:
-        raise ValueError(f"Unsupported scheme: {scheme}. Supported schemes: {', '.join(_SCHEME_HANDLERS.keys())}")
+        if scheme == "snippet":
+            # Reached when `source` is neither a known URL nor an existing
+            # local path. Bare model references are not resolvable on their own.
+            raise ValueError(
+                f"Could not resolve {source!r}. It is not a URL "
+                "(http/https/ftp/s3/gs) nor an existing local path. Bare model "
+                "snippets are not supported; pass a full URL or local path to "
+                "the model metadata."
+            )
+        raise ValueError(
+            f"Unsupported scheme: {scheme}. Supported schemes: {', '.join(_SCHEME_HANDLERS.keys())}"
+        )
 
     try:
         return handler(full_source)
     except Exception as e:
         raise RuntimeError(f"Failed to load from {full_source}: {e!s}") from e
 
+
 # --- Public Text-Based Loaders ---
 
+
 def load_python_module(
-    source: str,
-    module_name: str = "mlstac_model_loader"
+    source: str, module_name: str = "mlstac_model_loader"
 ) -> types.ModuleType:
     """
     Dynamically load a Python module from the given source.
@@ -208,10 +228,9 @@ def load_stac_item(source: str) -> pystac.Item:
     except Exception as e:
         raise RuntimeError(f"Failed to load STAC item from {source}: {e!s}") from e
 
+
 def download_file(
-    source: str,
-    snippet_suffix: str = "",
-    outpath: str | Path = "."
+    source: str, snippet_suffix: str = "", outpath: str | Path = "."
 ) -> Path:
     """
     Download a file from the given source and save it in the specified output folder.
@@ -233,9 +252,16 @@ def download_file(
     """
     scheme = get_scheme(source)
 
-    # Determine the output filename based on the source path
+    # Determine the full URL to download
     to_download = f"{source}{snippet_suffix}"
-    out_file = Path(outpath) / Path(snippet_suffix).name
+
+    # ✅ FIX: Determine filename correctly
+    if snippet_suffix:
+        filename = Path(snippet_suffix).name
+    else:
+        filename = Path(to_download).name
+
+    out_file = Path(outpath) / filename
     out_file.parent.mkdir(parents=True, exist_ok=True)
 
     try:
@@ -261,19 +287,28 @@ def download_file(
             s3.download_file(
                 Bucket=parsed.netloc,
                 Key=parsed.path.lstrip("/"),
-                Filename=str(out_file)
+                Filename=str(out_file),
             )
         elif scheme == "gs":
             try:
                 from google.cloud import storage
             except ImportError as e:
-                raise ImportError("GCS access requires google-cloud-storage: pip install google-cloud-storage") from e
+                raise ImportError(
+                    "GCS access requires google-cloud-storage: pip install google-cloud-storage"
+                ) from e
 
             parsed = urlparse(to_download)
             client = storage.Client()
             bucket = client.bucket(parsed.netloc)
             blob = bucket.blob(parsed.path.lstrip("/"))
             blob.download_to_filename(str(out_file))
+        elif scheme == "snippet":
+            # `source` is neither a known URL nor an existing local path.
+            raise ValueError(
+                f"Could not resolve {to_download!r}. It is not a URL "
+                "(http/https/ftp/s3/gs) nor an existing local path. Bare model "
+                "snippets are not supported; pass a full URL or local path."
+            )
         else:
             raise ValueError(f"Unsupported scheme: {scheme}")
 
@@ -282,4 +317,6 @@ def download_file(
         # Clean up partially downloaded file if it exists
         if out_file.exists():
             out_file.unlink()
-        raise RuntimeError(f"Failed to download {to_download} to {out_file}: {e!s}") from e
+        raise RuntimeError(
+            f"Failed to download {to_download} to {out_file}: {e!s}"
+        ) from e

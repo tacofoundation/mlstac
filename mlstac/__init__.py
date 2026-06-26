@@ -1,37 +1,16 @@
-"""
-MLSTAC: A machine learning model-sharing specification based on STAC MLM and Safetensors.
+"""MLSTAC - Machine Learning STAC metadata for model distribution."""
 
-MLSTAC is a Python package designed for seamless machine learning model sharing and loading.
-It builds on the STAC MLM specification for standardized model metadata and utilizes Safetensors
-for secure and efficient model storage.
+import importlib as _importlib
 
-With MLSTAC, you can discover, download, and load ML models with a single line of code from various
-data repositories, making model deployment and integration easier than ever.
+_importlib.import_module("mlstac._quiet")
 
-Example:
-    >>> import mlstac
-    >>>
-    >>> # Load a model by ID
-    >>> model = mlstac.load("UNetMobV2_V1")
-    >>>
-    >>> # Download the model locally
-    >>> model.download("./models/UNetMobV2_V1")
-    >>>
-    >>> # Load for inference
-    >>> inference_model = model.load_compiled_model()
-    >>>
-    >>> # Load for training
-    >>> training_model = model.load_trainable_model()
-"""
+from mlstac.main import ModelLoader, download, load
 
-from mlstac.main import load, download
+__all__ = ["ModelLoader", "download", "load"]
 
-__all__ = ["load", "download"]
+try:
+    import importlib.metadata
 
-
-# Dynamic version import
-import importlib.metadata
-
-__version__ = importlib.metadata.version("mlstac")
-
-
+    __version__ = importlib.metadata.version("mlstac")
+except importlib.metadata.PackageNotFoundError:
+    __version__ = "dev"
