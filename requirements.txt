@@ -1,0 +1,8 @@
+# Runtime dependencies for mlstac.
+# Note: with Poetry these live in pyproject.toml; this file is a convenience
+# mirror for plain `pip install -r requirements.txt` setups.
+pystac>=1.12.2
+fsspec>=2024.10.0
+safetensors>=0.5.2
+tqdm>=4.67.1
+requests>=2.31.0
